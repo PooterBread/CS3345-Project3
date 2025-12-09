@@ -3,20 +3,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 
-/**
- * Main class for running QuickSort performance tests.
- * Takes four command line arguments:
- * 1. Array size
- * 2. Report filename
- * 3. Unsorted array filename
- * 4. Sorted array filename
- */
 public class QuickSortMain {
-    
     public static void main(String[] args) {
-        // Validate command line arguments
         if (args.length != 4) {
-            System.err.println("Usage: java QuickSortMain <array_size> <report_file> <unsorted_file> <sorted_file>");
+            System.err.println("Format error: java QuickSortMain <array_size> <report_file> <unsorted_file> <sorted_file>");
             System.exit(1);
         }
         
@@ -26,13 +16,11 @@ public class QuickSortMain {
             String unsortedFile = args[2];
             String sortedFile = args[3];
             
-            // Generate random list
+            // This will generate a random list
             ArrayList<Integer> originalList = QuickSorter.generateRandomList(arraySize);
             
-            // Save unsorted array to file
             writeListToFile(originalList, unsortedFile);
             
-            // Test each pivot strategy
             Duration firstElementTime = testPivotStrategy(
                 originalList, QuickSorter.PivotStrategy.FIRST_ELEMENT, "FIRST_ELEMENT");
             Duration randomElementTime = testPivotStrategy(
@@ -44,12 +32,11 @@ public class QuickSortMain {
                 originalList, QuickSorter.PivotStrategy.MEDIAN_OF_THREE_ELEMENTS, 
                 "MEDIAN_OF_THREE_ELEMENTS");
             
-            // Save the final sorted array (from the last sort) to file
             ArrayList<Integer> finalSorted = new ArrayList<>(originalList);
             QuickSorter.timedQuickSort(finalSorted, QuickSorter.PivotStrategy.MEDIAN_OF_THREE_ELEMENTS);
             writeListToFile(finalSorted, sortedFile);
             
-            // Write report
+            // Creates the report with the data
             writeReport(reportFile, arraySize, firstElementTime, randomElementTime, 
                        medianThreeRandomTime, medianThreeTime);
             
@@ -69,29 +56,12 @@ public class QuickSortMain {
         }
     }
     
-    /**
-     * Tests a pivot strategy by making a copy of the list, sorting it, and returning the time.
-     * 
-     * @param originalList the original unsorted list
-     * @param strategy the pivot strategy to test
-     * @param strategyName the name of the strategy (for debugging)
-     * @return the Duration taken to sort
-     */
     private static Duration testPivotStrategy(ArrayList<Integer> originalList, 
-                                            QuickSorter.PivotStrategy strategy, 
-                                            String strategyName) {
-        // Make a deep copy of the list for this test
+        QuickSorter.PivotStrategy strategy, String strategyName) {
         ArrayList<Integer> testList = new ArrayList<>(originalList);
         return QuickSorter.timedQuickSort(testList, strategy);
     }
     
-    /**
-     * Writes a list to a file, one integer per line.
-     * 
-     * @param list the list to write
-     * @param filename the filename to write to
-     * @throws IOException if an I/O error occurs
-     */
     private static void writeListToFile(ArrayList<Integer> list, String filename) 
             throws IOException {
         try (FileWriter writer = new FileWriter(filename)) {
@@ -100,18 +70,7 @@ public class QuickSortMain {
             }
         }
     }
-    
-    /**
-     * Writes the performance report to a file.
-     * 
-     * @param filename the report filename
-     * @param arraySize the size of the array that was sorted
-     * @param firstElementTime time for FIRST_ELEMENT strategy
-     * @param randomElementTime time for RANDOM_ELEMENT strategy
-     * @param medianThreeRandomTime time for MEDIAN_OF_THREE_RANDOM_ELEMENTS strategy
-     * @param medianThreeTime time for MEDIAN_OF_THREE_ELEMENTS strategy
-     * @throws IOException if an I/O error occurs
-     */
+   
     private static void writeReport(String filename, int arraySize,
                                    Duration firstElementTime,
                                    Duration randomElementTime,
